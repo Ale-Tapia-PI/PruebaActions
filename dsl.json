@@ -1,0 +1,86 @@
+{
+    "variables": [
+        {
+            "name": "BACKUP_PATH",
+            "value": "s3://backups/s3_data",
+            "type": "folder"
+        },
+        {
+            "name": "BACKUP_RD",
+            "value": "s3://backups/test_data.csv",
+            "type": "file"
+        },
+        {
+            "name": "COMPONENT_VERSION",
+            "value": "latest"
+        },
+        {
+            "name": "ECR_BASE",
+            "value": "774755900012.dkr.ecr.us-east-1.amazonaws.com/pureinsights/helm"
+        },
+        {
+            "name": "GITHUB_BASE",
+            "value": "https://github.com/pureinsights"
+        }
+    ],
+    "infrastructure": [
+        {
+            "name": "GKE",
+            "module": "${GITHUB_BASE}/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/eks",
+            "config": ".../terraform/gke.tf"
+        },
+        {
+            "name": "RDS",
+            "module": "${GITHUB_BASE}/pureinsights/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/rds",
+            "config": ".../terraform/rds.tf"
+        },
+        {
+            "name": "S3",
+            "module": "${GITHUB_BASE}/pureinsights/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/s3",
+            "config": ".../terraform/s3.tf"
+        }
+    ],
+    "config": [
+        {
+            "name": "ingestion-pipeline-manager",
+            "source": "${ECR_BASE}/ingestion-pipeline-manager:${COMPONENT_VERSION}",
+            "config": "../helm/ingestion-pipeline-manager.yaml",
+            "k8s_cluster": "${infrastructure:GKE}"
+        },
+        {
+            "name": "ingestion-workflow-manager",
+            "source": "${ECR_BASE}/ingestion-pipeline-manager:${COMPONENT_VERSION}",
+            "config": "../helm/ingestion-workflow-manager.yaml",
+            "k8s_cluster": "${infrastructure:GKE}"
+        },
+        {
+            "name": "ingestion-pipeline-manager",
+            "source": "${ECR_BASE}/ingestion-pipeline-manager:${COMPONENT_VERSION}",
+            "config": "../helm/ingestion-pipeline-manager.yaml",
+            "k8s_cluster": "${infrastructure:GKE}"
+        },
+        {
+            "name": "s3-connector",
+            "source": "${ECR_BASE}/s3-connector:${COMPONENT_VERSION}",
+            "config": "../helm/s3-connector.yaml",
+            "k8s_cluster": "${infrastructure:GKE}"
+        }
+    ],
+    "backups": [
+        {
+            "name": "RESTORE_S3",
+            "type": "S3_FILES",
+            "source": "${BACKUP_PATH}",
+            "recursive": true,
+            "destination": "${infrastructure:S3}"
+        },
+        {
+            "name": "RESTORE_RDS",
+            "type": "MYSQL",
+            "source": "${BACKUP_RD}",
+            "schema": "../schema/db.sql",
+            "destination": "${infrastructure:RDS}"
+        }
+    ]
+
+}
