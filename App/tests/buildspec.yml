@@ -9,14 +9,14 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
-      - echo Install config
+      - echo Install tests
       # - npm run lint
   pre_build:
     commands:
-      - Echo Pre-Build config
+      - Echo Pre-Build tests
   build:
     commands:
-      - echo Build config
+      - echo Build tests
 
 artifacts:
   files:

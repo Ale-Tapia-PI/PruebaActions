@@ -81,6 +81,39 @@
             "schema": "../schema/db.sql",
             "destination": "${infrastructure:RDS}"
         }
+    ],
+    "tests": [
+        {
+            "name": "GKE",
+            "module": "${GITHUB_BASE}/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/eks",
+            "config": ".../terraform/gke.tf"
+        },
+        {
+            "name": "RDS",
+            "module": "${GITHUB_BASE}/pureinsights/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/rds",
+            "config": ".../terraform/rds.tf"
+        },
+        {
+            "name": "S3",
+            "module": "${GITHUB_BASE}/pureinsights/pdp-infrastructure/tree/main/iac/modules/aws/pureinsights/s3",
+            "config": ".../terraform/s3.tf"
+        }
+    ],
+    "cleanup": [
+        {
+            "name": "RESTORE_S3",
+            "type": "S3_FILES",
+            "source": "${BACKUP_PATH}",
+            "recursive": true,
+            "destination": "${infrastructure:S3}"
+        },
+        {
+            "name": "RESTORE_RDS",
+            "type": "MYSQL",
+            "source": "${BACKUP_RD}",
+            "schema": "../schema/db.sql",
+            "destination": "${infrastructure:RDS}"
+        }
     ]
 
 }

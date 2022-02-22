@@ -9,14 +9,14 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
-      - echo Install config
+      - echo Install cleanup
       # - npm run lint
   pre_build:
     commands:
-      - Echo Pre-Build config
+      - Echo Pre-Build cleanup
   build:
     commands:
-      - echo Build config
+      - echo Build cleanup
 
 artifacts:
   files:

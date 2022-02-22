@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    NODE_ENV: "${env}"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      - echo Install infrastructure
+      - ls
+      # - npm run lint
+  pre_build:
+    commands:
+      - Echo Pre-Build infrastructure
+  build:
+    commands:
+      - echo Build infrastructure
+
+artifacts:
+  files:
+    - "**/*"
+  name: "web-dist-${env}"
+  base-directory: build
+
+cache:
+  paths:
+    - /root/.npm/**/*
